@@ -1,0 +1,41 @@
+﻿using Exiled.Events.EventArgs;
+
+using Timing = MEC.Timing;
+
+namespace CrazyPills
+{
+    internal class Handlers
+    {
+        internal void OnUsingMedicalItem(UsingMedicalItemEventArgs ev)
+        {
+            if (ev.Item != ItemType.Painkillers) return;
+            var rand = new System.Random();
+            var num = rand.Next(15);
+            Timing.CallDelayed(3f, () => EventHandlers.PillEffect(num, ev.Player));
+        }
+
+        public void OnHurting(HurtingEventArgs ev)
+        {
+            if (Plugin.Instance.Invincible.Contains(ev.Target))
+            {
+                ev.IsAllowed = false;
+            }
+        }
+
+        internal void OnSpawning(SpawningEventArgs ev)
+        {
+            if (ev.Player.IsHuman && ev.Player.Role != RoleType.ChaosInsurgency && Plugin.Instance.Config.SpawnWithPills)
+            {
+                Timing.CallDelayed(0.5f, () => ev.Player.Inventory.AddNewItem(ItemType.Painkillers));
+            }
+        }
+
+        internal void OnTeleporting(TeleportingEventArgs ev)
+        {
+            if (Plugin.Instance.Invincible.Contains(ev.Player))
+            {
+                ev.IsAllowed = false;
+            }
+        }
+    }
+}
