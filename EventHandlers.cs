@@ -82,7 +82,8 @@ namespace CrazyPills
             switch (num)
             {
                 case 0:
-                    p.ShowHint("Seems that you'll be meeting an unfortunate fate...", 6f);
+                    if (Plugin.Instance.Config.ShowHints)
+                        p.ShowHint("Seems that you'll be meeting an unfortunate fate...", 6f);
                     Timing.CallDelayed(6f, () => p.Kill());
                     break;
                 case 1:
@@ -124,7 +125,8 @@ namespace CrazyPills
                         p.Inventory.AddNewItem(ItemType.GunLogicer);
                         p.Ammo[(int)AmmoType.Nato762] += 100;
                     }
-                    p.ShowHint("You have been granted a gun and ammo from the pill genie", 8f);
+                    if (Plugin.Instance.Config.ShowHints)
+                        p.ShowHint("You have been granted a gun and ammo from the pill genie", 8f);
                     break;
                 case 4:
                     alive = Player.List.Where(x => x.Team != Team.RIP && x != p && x.Role != RoleType.Scp079).ToList();
@@ -146,7 +148,8 @@ namespace CrazyPills
                     SpawnGrenadeOnPlayer(p, GrenadeType.Scp018, 7f);
                     break;
                 case 8:
-                    p.ShowHint("You've been granted invincibility for 20 seconds by pill genie", 8f);
+                    if (Plugin.Instance.Config.ShowHints)
+                        p.ShowHint("You've been granted invincibility for 20 seconds by pill genie", 8f);
                     Plugin.Instance.Invincible.Add(p);
                     Timing.CallDelayed(20f, () => Plugin.Instance.Invincible.Remove(p));
                     break;
@@ -167,7 +170,8 @@ namespace CrazyPills
                     if (rand.Next(101) > 10 || !Plugin.Instance.Config.WarheadStatStop)
                     {
                         Warhead.LeverStatus = !Warhead.LeverStatus;
-                        p.ShowHint(string.Format($"The magic pill genie has switched the nuke to {Warhead.LeverStatus.ToString().ToLower()}.", 8f));
+                        if (Plugin.Instance.Config.ShowHints)
+                            p.ShowHint(string.Format($"The magic pill genie has switched the nuke to {Warhead.LeverStatus.ToString().ToLower()}.", 8f));
                     }
                     else
                     {
@@ -198,8 +202,11 @@ namespace CrazyPills
                             randDead.Position = prePosition;
                             randDead.ResetInventory(preInv);
                         });
-                        p.ShowHint("the magic pill genie has replaced you with another.");
-                        randDead.ShowHint("the magic pill genie has summoned you in place of another.");
+                        if (Plugin.Instance.Config.ShowHints)
+                        {
+                            p.ShowHint("the magic pill genie has replaced you with another.");
+                            randDead.ShowHint("the magic pill genie has summoned you in place of another.");
+                        }
                     }
                     else
                     {
@@ -210,7 +217,8 @@ namespace CrazyPills
                         prePosition = p.Position;
                         p.Position = randAlive.Position;
                         randAlive.Position = prePosition;
-                        p.ShowHint("the magic pill genie has switched you with another.", 8f);
+                        if (Plugin.Instance.Config.ShowHints)
+                            p.ShowHint("the magic pill genie has switched you with another.", 8f);
                         randAlive.ShowHint("the magic pill genie has switched you with another.", 8f);
                     }
                     break;
@@ -243,7 +251,8 @@ namespace CrazyPills
                             p.DropItems();
                             p.Inventory.AddNewItem(ItemType.KeycardO5); break;
                     }
-                    p.ShowHint("the magic pill genie has promoted you!", 8f);
+                    if (Plugin.Instance.Config.ShowHints)
+                        p.ShowHint("the magic pill genie has promoted you!", 8f);
                     break;
                 case 14:
                     alive = Player.List.Where(x => x.Team != Team.RIP && x != p && x.Role != RoleType.Scp079).ToList();
@@ -253,8 +262,11 @@ namespace CrazyPills
                     prePosition = p.Position;
                     p.Position = randAlive.Position;
                     randAlive.Position = prePosition;
-                    p.ShowHint("the magic pill genie has switched you with another.", 8f);
-                    randAlive.ShowHint("the magic pill genie has switched you with another.", 8f);
+                    if (Plugin.Instance.Config.ShowHints)
+                    {
+                        p.ShowHint("the magic pill genie has switched you with another.", 8f);
+                        randAlive.ShowHint("the magic pill genie has switched you with another.", 8f);
+                    }
                     break;
             }
         }
