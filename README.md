@@ -34,5 +34,11 @@ Boolean SpawnWithPills (true by default)
 Description: Whether or not all players are guarenteed to spawn with pills.
 
 Boolean WarheadStatStop (true by default)
-Description: Whether or not the pills can have a 1 in 15 in 10 chance of turning on the nuke or off.
+Description: Whether or not Pain Killer consumption has a small chance of turning the nuke on or off dependent on current state.
+
+Integer WarheadStartStopChance (10 by default)
+Description: If "WarheadStatStop" is true, this dictates the percentage chance of the warhead starting/stopping with the event.
+
+Boolean ShowHints (true by default)
+Description: Whether or not to show a hint during certain Pain Killer consumption events.
 ```
