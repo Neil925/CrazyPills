@@ -6,21 +6,21 @@ When enabling this plugin, 15 randomized events may occur during the consumption
 
 ### Pain Killer Consumption Events Consist Of
 ```
-Instant death
-Temporary zombification
-Maximum health reheal and significant artificial hp increase
-Being granted a gun
-Teleportation to a random player
-A random player teleporting to the consumer
-Switching places with a random player
-Replacement with a dead player
-Spontaneous combustion
-4 bouncy balls being thrown
-Smallification
-Temporary invincibility
-A full inventory of Pain Killers
-90% cahnce of Switching the state of the warhead lever, 10% switchting the state of the warhead itself.
-A role promotion
+- Instant death
+- Temporary zombification
+- Maximum health reheal and significant artificial hp increase
+- Being granted a gun
+- Teleportation to a random player
+- A random player teleporting to the consumer
+- Switching places with a random player
+- Replacement with a dead player
+- Spontaneous combustion
+- 4 bouncy balls being thrown
+- Smallification
+- Temporary invincibility
+- A full inventory of Pain Killers
+- 90% cahnce of Switching the state of the warhead lever, 10% switchting the state of the warhead itself.
+- A role promotion
 ```
 
 ### Command
