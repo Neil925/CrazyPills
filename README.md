@@ -1,6 +1,6 @@
 # Crazy Pills
 
-An SCP:SL Exiled plugin that allows for randomized and fun events to occur upon consumptions of the in-game item "Pain Killers".
+An SCP:SL Exiled plugin that allows for randomized and fun events to occur upon consumption of the in-game item "Pain Killers".
 
 When enabling this plugin, 15 randomized events may occur during the consumption of the "Pain Killers" item in SCP:SL.
 
