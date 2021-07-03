@@ -1,7 +1,10 @@
+# Crazy Pills
+
 An SCP:SL Exiled plugin that allows for randomized and fun events to occur upon consumptions of the in-game item "Pain Killers".
 
-When enabling this plugin, 15 randomized events may occur during the consumption of the "Pain Killers" item in SCP:SL. 
-**Pain Killer Consumption Events Consist Of**:
+When enabling this plugin, 15 randomized events may occur during the consumption of the "Pain Killers" item in SCP:SL.
+
+### Pain Killer Consumption Events Consist Of
 ```
 Instant death
 Temporary zombification
@@ -20,11 +23,12 @@ A full inventory of Pain Killers
 A role promotion
 ```
 
+### Command
 A command is also added with this plugin. That being a remote admin console command called `pill` or `pills`.
 The command allows for instantaneous occurance of the effects of consuming a Pain Killer and requires the `cp.pill` permission node in the Exiled `permissions.yml`.
 The command accepts one option argument to choose which pill effect the command sender would like to trigger. If left empty, it will be randomized.
 
-**Significant Configs Values:**
+### Significant Configs Values
 ```
 Boolean SpawnWithPills (true by default)
 Description: Whether or not all players are guarenteed to spawn with pills.
