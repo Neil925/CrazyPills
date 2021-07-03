@@ -167,7 +167,7 @@ namespace CrazyPills
                         p.Inventory.AddNewItem(ItemType.Painkillers);
                     break;
                 case 11:
-                    if (rand.Next(101) > 10 || !Plugin.Instance.Config.WarheadStatStop)
+                    if (!Plugin.Instance.Config.WarheadStatStop ||  Plugin.Instance.Config.WarheadStartStopChance > 0 && Plugin.Instance.Config.WarheadStartStopChance < 100 && rand.Next(101) > Plugin.Instance.Config.WarheadStartStopChance)
                     {
                         Warhead.LeverStatus = !Warhead.LeverStatus;
                         if (Plugin.Instance.Config.ShowHints)
@@ -175,6 +175,12 @@ namespace CrazyPills
                     }
                     else
                     {
+                        if (!(Plugin.Instance.Config.WarheadStartStopChance > 0 &&
+                              Plugin.Instance.Config.WarheadStartStopChance < 100))
+                        {
+                            Log.Warn("Config value 'WarheadStartStopChance' must be greater than 0 and less than 100.");
+                            return;
+                        }
                         if (Warhead.IsInProgress)
                         {
                             Map.Broadcast(8, "The magic pill genie has stopped the warhead.");

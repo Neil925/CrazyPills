@@ -10,8 +10,12 @@ namespace CrazyPills
         [Description("Whether or not all players are guarenteed to spawn with pills.")]
         public bool SpawnWithPills { get; private set; } = true;
 
-        [Description("Whether or not the pills can have a 1 in 15 in 10 chance of turning on the nuke or off.")]
+        [Description("Whether or not Pain Killer consumption has a small chance of turning the nuke on or off dependent on current state.")]
         public bool WarheadStatStop { get; private set; } = true;
+
+        [Description("If the above value is true, this dictates the percentage chance of the warhead starting/stopping with the event.")]
+        public int WarheadStartStopChance { get; private set; } = 10;
+
         [Description("Whether or not to show a hint during certain Pain Killer consumption events.")]
         public bool ShowHints { get; private set; } = true;
     }
