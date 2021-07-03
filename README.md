@@ -26,7 +26,7 @@ When enabling this plugin, 15 randomized events may occur during the consumption
 ### Command
 A command is also added with this plugin. That being a remote admin console command called `pill` or `pills`.
 The command allows for instantaneous occurance of the effects of consuming a Pain Killer and requires the `cp.pill` permission node in the Exiled `permissions.yml`.
-The command accepts one option argument to choose which pill effect the command sender would like to trigger. If left empty, it will be randomized.
+The command accepts one optional argument to choose which pill effect the command sender would like to trigger. If left empty, it will be randomized.
 
 ### Significant Configs Values
 ```
