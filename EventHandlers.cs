@@ -167,7 +167,7 @@ namespace CrazyPills
                         p.Inventory.AddNewItem(ItemType.Painkillers);
                     break;
                 case 11:
-                    if (!Plugin.Instance.Config.WarheadStatStop ||  Plugin.Instance.Config.WarheadStartStopChance > 0 && Plugin.Instance.Config.WarheadStartStopChance < 100 && rand.Next(101) > Plugin.Instance.Config.WarheadStartStopChance)
+                    if (!Plugin.Instance.Config.WarheadStatStop || Plugin.Instance.Config.WarheadStartStopChance > 0 && Plugin.Instance.Config.WarheadStartStopChance < 100 && rand.Next(101) > Plugin.Instance.Config.WarheadStartStopChance)
                     {
                         Warhead.LeverStatus = !Warhead.LeverStatus;
                         if (Plugin.Instance.Config.ShowHints)
@@ -224,8 +224,10 @@ namespace CrazyPills
                         p.Position = randAlive.Position;
                         randAlive.Position = prePosition;
                         if (Plugin.Instance.Config.ShowHints)
+                        {
                             p.ShowHint("the magic pill genie has switched you with another.", 8f);
-                        randAlive.ShowHint("the magic pill genie has switched you with another.", 8f);
+                            randAlive.ShowHint("the magic pill genie has switched you with another.", 8f);
+                        }
                     }
                     break;
                 case 13:
