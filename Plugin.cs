@@ -23,13 +23,13 @@ namespace CrazyPills
 
         public List<Player> Invincible = new List<Player>();
 
-        private Handlers _handler;
+        private EventHandlers _handler;
 
         public override void OnEnabled()
         {
             Instance = this;
 
-            _handler = new Handlers();
+            _handler = new EventHandlers();
 
             PlayerE.UsingMedicalItem += _handler.OnUsingMedicalItem;
             PlayerE.Hurting += _handler.OnHurting;

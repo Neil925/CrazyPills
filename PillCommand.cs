@@ -15,6 +15,8 @@ namespace CrazyPills
 
         public string Description { get; } = "Instantly uses a pill.";
 
+        public Random Rand = new Random();
+
         public bool Execute(ArraySegment<string> arguments, ICommandSender sender, out string response)
         {
             var p = Player.Get(((PlayerCommandSender)sender).ReferenceHub);
@@ -35,34 +37,31 @@ namespace CrazyPills
 
             if (arguments.Count == 0)
             {
-                var rand = new Random();
-                num = rand.Next(15);
-                EventHandlers.PillEffect(num, p);
+                num = Rand.Next(PillEvents.PillEffects.Count - 1);
+                Handlers.PillEffect(num, p);
             }
             else
             {
                 if (int.TryParse(arguments.At(0), out num))
                 {
-                    if (num <= 15 && num > 1)
-                        EventHandlers.PillEffect(num - 1, p);
-                    else
+                    if (num > PillEvents.PillEffects.Count || num < 1)
                     {
-                        response = "Accepted range is 1 through 15.";
+                        response = $"Accepted range is 1 through {PillEvents.PillEffects.Count}.";
                         return false;
                     }
+
+                    Handlers.PillEffect(num - 1, p);
                 }
                 else
                 {
-                    if (arguments.At(0) == "help")
+                    if (arguments.At(0) != "help")
                     {
-                        response = "Provide a number based on which pill event you'd like to occur or leave arguments empty for a random event. Accepted range is 1 through 15.";
-                        return true;
-                    }
-                    else
-                    {
-                        response = "Incorrect use of command. Either leave arguments empty to have a random pill effect occur or provide the number that corresponds with the event you are attempting. Accepted range is 1 through 15.";
+                        response = $"Incorrect use of command. Either leave arguments empty to have a random pill effect occur or provide the number that corresponds with the event you are attempting. Accepted range is 1 through {PillEvents.PillEffects.Count}.";
                         return false;
                     }
+
+                    response = $"Provide a number based on which pill event you'd like to occur or leave arguments empty for a random event. Accepted range is 1 through {PillEvents.PillEffects.Count}.";
+                    return true;
                 }
             }
 

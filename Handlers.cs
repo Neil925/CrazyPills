@@ -1,41 +1,38 @@
-﻿using Exiled.Events.EventArgs;
-
-using Timing = MEC.Timing;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Exiled.API.Enums;
+using Exiled.API.Extensions;
+using Exiled.API.Features;
+using Grenades;
+using MEC;
+using Mirror;
+using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace CrazyPills
 {
-    internal class Handlers
+    public class Handlers : PillEvents
     {
-        internal void OnUsingMedicalItem(UsingMedicalItemEventArgs ev)
+        public static void SpawnGrenade(Vector3 position, Vector3 velocity, Player player, float fuseTime = 3f, GrenadeType grenadeType = GrenadeType.FragGrenade)
         {
-            if (ev.Item != ItemType.Painkillers) return;
-            var rand = new System.Random();
-            var num = rand.Next(15);
-            Timing.CallDelayed(3f, () => EventHandlers.PillEffect(num, ev.Player));
+            if (player == null)
+                player = Server.Host;
+
+            var component = player.GrenadeManager;
+            var component2 = Object.Instantiate(component.availableGrenades[(int)grenadeType].grenadeInstance).GetComponent<Grenade>();
+
+            component2.FullInitData(component, position, Quaternion.Euler(component2.throwStartAngle), velocity, component2.throwAngularVelocity, player == Server.Host ? Team.SCP : player.Team);
+            component2.NetworkfuseTime = NetworkTime.time + fuseTime;
+            NetworkServer.Spawn(component2.gameObject);
         }
 
-        public void OnHurting(HurtingEventArgs ev)
+        public static void PillEffect(int num, Player p)
         {
-            if (Plugin.Instance.Invincible.Contains(ev.Target))
-            {
-                ev.IsAllowed = false;
-            }
-        }
-
-        internal void OnSpawning(SpawningEventArgs ev)
-        {
-            if (ev.Player.IsHuman && ev.Player.Role != RoleType.ChaosInsurgency && Plugin.Instance.Config.SpawnWithPills)
-            {
-                Timing.CallDelayed(0.5f, () => ev.Player.Inventory.AddNewItem(ItemType.Painkillers));
-            }
-        }
-
-        internal void OnTeleporting(TeleportingEventArgs ev)
-        {
-            if (Plugin.Instance.Invincible.Contains(ev.Player))
-            {
-                ev.IsAllowed = false;
-            }
+            Ply = p;
+            PillEffects[num]();
         }
     }
 }
