@@ -6,15 +6,16 @@ namespace CrazyPills
 {
     internal class EventHandlers
     {
+        private readonly System.Random _rand = new System.Random();
+
         internal void OnUsingMedicalItem(UsingMedicalItemEventArgs ev)
         {
             if (ev.Item != ItemType.Painkillers) return;
-            var rand = new System.Random();
-            var num = rand.Next(PillEvents.PillEffects.Count - 1);
+            var num = _rand.Next(PillEvents.PillEffects.Count - 1);
             Timing.CallDelayed(3f, () => Handlers.PillEffect(num, ev.Player));
         }
 
-        public void OnHurting(HurtingEventArgs ev)
+        internal void OnHurting(HurtingEventArgs ev)
         {
             if (Plugin.Instance.Invincible.Contains(ev.Target))
             {
