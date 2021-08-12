@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel;
 
-namespace CrazyPills.Configs
+namespace CrazyPills.Translations
 {
-    public class BroadcastTextConfigs
+    public class BroadcastTextTranslations
     {
         [Description("Broadcast made when the pills result in the nuke being triggered.")]
         public string WarHeadEnabled = "The magic pill genie has started the warhead.";

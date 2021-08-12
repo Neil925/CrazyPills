@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using CrazyPills.Configs;
 using Exiled.API.Enums;
 using Exiled.API.Features;
-using Hints;
 using MEC;
 using UnityEngine;
+using CrazyPills.Translations;
 using Random = System.Random;
 
 namespace CrazyPills
@@ -15,7 +14,7 @@ namespace CrazyPills
     {
         private static readonly Random Rand = new Random();
         private static readonly Config Configs = Plugin.Instance.Config;
-        private static readonly HintTextConfigs HintText = Configs.HintText;
+        private static readonly HintTextTranslations HintText = Plugin.Instance.Translation.Hints;
 
         public static Dictionary<int, Action<Player>> PillEffects = new Dictionary<int, Action<Player>>
         {
@@ -134,7 +133,8 @@ namespace CrazyPills
                         p.Inventory.AddNewItem(ItemType.Painkillers);
                 }
             },
-            { 11, p =>
+            {
+                11, p =>
                 {
                     if (!Configs.WarheadStartStop || Configs.WarheadStartStopChance > 0 && Configs.WarheadStartStopChance < 100 && Rand.Next(101) > Configs.WarheadStartStopChance)
                     {
@@ -151,13 +151,13 @@ namespace CrazyPills
                     }
                     if (Warhead.IsInProgress)
                     {
-                        Map.Broadcast(8, Configs.NukeBroadcasts.WarHeadDisabled, Broadcast.BroadcastFlags.Normal, false);
+                        Map.Broadcast(8, Plugin.Instance.Translation.Broadcasts.WarHeadDisabled, Broadcast.BroadcastFlags.Normal, false);
                         Warhead.Stop();
                         return;
                     }
 
                     Warhead.Start();
-                    Map.Broadcast(8, Configs.NukeBroadcasts.WarHeadEnabled, Broadcast.BroadcastFlags.Normal, false);
+                    Map.Broadcast(8, Plugin.Instance.Translation.Broadcasts.WarHeadEnabled, Broadcast.BroadcastFlags.Normal, false);
                 }
             },
             {

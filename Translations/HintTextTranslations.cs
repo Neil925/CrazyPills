@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel;
 
-namespace CrazyPills.Configs
+namespace CrazyPills.Translations
 {
-    public class HintTextConfigs
+    public class HintTextTranslations
     {
         [Description("Hint displayed upon the death event.")]
         public string DeathEvent = "Seems that you'll be meeting an unfortunate fate...";
