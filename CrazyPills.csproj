@@ -33,6 +33,8 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Config.cs" />
+    <Compile Include="Configs\BroadcastTextConfigs.cs" />
+    <Compile Include="Configs\HintTextConfigs.cs" />
     <Compile Include="Handlers.cs" />
     <Compile Include="EventHandlers.cs" />
     <Compile Include="PillCommand.cs" />
@@ -110,5 +112,6 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

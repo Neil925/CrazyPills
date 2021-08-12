@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using CrazyPills.Configs;
 using Exiled.API.Enums;
 using Exiled.API.Features;
+using Hints;
 using MEC;
 using UnityEngine;
 using Random = System.Random;
@@ -12,14 +14,16 @@ namespace CrazyPills
     public abstract class PillEvents
     {
         private static readonly Random Rand = new Random();
+        private static readonly Config Configs = Plugin.Instance.Config;
+        private static readonly HintTextConfigs HintText = Configs.HintText;
 
         public static Dictionary<int, Action<Player>> PillEffects = new Dictionary<int, Action<Player>>
         {
             {
                 0, p =>
                 {
-                    if (Plugin.Instance.Config.ShowHints)
-                        p.ShowHint("Seems that you'll be meeting an unfortunate fate...", 6f);
+                    if (Configs.ShowHints)
+                        p.ShowHint(HintText.DeathEvent, 8f);
                     Timing.CallDelayed(6f, () => p.Kill());
                 }
             },
@@ -54,8 +58,8 @@ namespace CrazyPills
             {
                 3, p =>
                 {
-                    if (Plugin.Instance.Config.ShowHints)
-                        p.ShowHint("You have been granted a gun and ammo from the pill genie", 8f);
+                    if (Configs.ShowHints)
+                        p.ShowHint(HintText.GunAndAmmo, 8f);
                     if (p.Role == RoleType.ClassD || p.Role == RoleType.Scientist)
                     {
                         p.Inventory.AddNewItem(ItemType.GunUSP);
@@ -105,8 +109,8 @@ namespace CrazyPills
             {
                 8, p =>
                 {
-                    if (Plugin.Instance.Config.ShowHints)
-                        p.ShowHint("You've been granted invincibility for 20 seconds by pill genie", 8f);
+                    if (Configs.ShowHints)
+                        p.ShowHint(HintText.Invincibility, 8f);
                     Plugin.Instance.Invincible.Add(p);
                     Timing.CallDelayed(20f, () => Plugin.Instance.Invincible.Remove(p));
                 }
@@ -132,29 +136,28 @@ namespace CrazyPills
             },
             { 11, p =>
                 {
-                    if (!Plugin.Instance.Config.WarheadStatStop || Plugin.Instance.Config.WarheadStartStopChance > 0 && Plugin.Instance.Config.WarheadStartStopChance < 100 && Rand.Next(101) > Plugin.Instance.Config.WarheadStartStopChance)
+                    if (!Configs.WarheadStartStop || Configs.WarheadStartStopChance > 0 && Configs.WarheadStartStopChance < 100 && Rand.Next(101) > Configs.WarheadStartStopChance)
                     {
                         Warhead.LeverStatus = !Warhead.LeverStatus;
-                        if (Plugin.Instance.Config.ShowHints)
-                            p.ShowHint(string.Format($"The magic pill genie has switched the nuke to {Warhead.LeverStatus.ToString().ToLower()}.", 8f));
+                        if (Configs.ShowHints)
+                            p.ShowHint(string.Format(HintText.LeverSwitch.Replace("{LeverStatus}", Warhead.LeverStatus.ToString().ToLower()), 8f));
                         return;
                     }
 
-                    if (!(Plugin.Instance.Config.WarheadStartStopChance > 0 &&
-                            Plugin.Instance.Config.WarheadStartStopChance < 100))
+                    if (!(Configs.WarheadStartStopChance > 0 && Configs.WarheadStartStopChance < 100))
                     {
                         Log.Warn("Config value 'WarheadStartStopChance' must be greater than 0 and less than 100.");
                         return;
                     }
                     if (Warhead.IsInProgress)
                     {
-                        Map.Broadcast(8, "The magic pill genie has stopped the warhead.", Broadcast.BroadcastFlags.Normal, false);
+                        Map.Broadcast(8, Configs.NukeBroadcasts.WarHeadDisabled, Broadcast.BroadcastFlags.Normal, false);
                         Warhead.Stop();
                         return;
                     }
 
                     Warhead.Start();
-                    Map.Broadcast(8, "The magic pill genie has started the warhead.", Broadcast.BroadcastFlags.Normal, false);
+                    Map.Broadcast(8, Configs.NukeBroadcasts.WarHeadEnabled, Broadcast.BroadcastFlags.Normal, false);
                 }
             },
             {
@@ -178,9 +181,9 @@ namespace CrazyPills
                             randDead.Position = prePosition;
                             randDead.ResetInventory(preInv);
                         });
-                        if (!Plugin.Instance.Config.ShowHints) return;
-                        p.ShowHint("the magic pill genie has replaced you with another.");
-                        randDead.ShowHint("the magic pill genie has summoned you in place of another.");
+                        if (!Configs.ShowHints) return;
+                        p.ShowHint(HintText.Replacement["Replaced"], 8f);
+                        randDead.ShowHint(HintText.Replacement["Replacer"], 8f);
                         return;
                     }
 
@@ -192,9 +195,9 @@ namespace CrazyPills
                     p.Position = randAlive.Position;
                     randAlive.Position = prePosition;
 
-                    if (!Plugin.Instance.Config.ShowHints) return;
-                    p.ShowHint("the magic pill genie has switched you with another.", 8f);
-                    randAlive.ShowHint("the magic pill genie has switched you with another.", 8f);
+                    if (!Configs.ShowHints) return;
+                    p.ShowHint(HintText.Switching, 8f);
+                    randAlive.ShowHint(HintText.Switching, 8f);
                 }
             },
             {
@@ -228,8 +231,8 @@ namespace CrazyPills
                             p.DropItems();
                             p.Inventory.AddNewItem(ItemType.KeycardO5); break;
                     }
-                    if (Plugin.Instance.Config.ShowHints)
-                        p.ShowHint("the magic pill genie has promoted you!", 8f);
+                    if (Configs.ShowHints)
+                        p.ShowHint(HintText.Promotion, 8f);
                 }
             },
             {
@@ -243,9 +246,9 @@ namespace CrazyPills
                     p.Position = randAlive.Position;
                     randAlive.Position = prePosition;
 
-                    if (!Plugin.Instance.Config.ShowHints) return;
-                    p.ShowHint("the magic pill genie has switched you with another.", 8f);
-                    randAlive.ShowHint("the magic pill genie has switched you with another.", 8f);
+                    if (!Configs.ShowHints) return;
+                    p.ShowHint(HintText.Switching, 8f);
+                    randAlive.ShowHint(HintText.Switching, 8f);
                 }
             }
         };
