@@ -14,7 +14,7 @@ namespace CrazyPills
     {
         private static readonly Random Rand = new Random();
         private static readonly Config Configs = Plugin.Instance.Config;
-        private static readonly HintTextTranslations HintText = Plugin.Instance.Translation.Hints;
+        private static readonly HintTextTranslations HintText = Plugin.Instance.Config.Hints;
 
         public static Dictionary<int, Action<Player>> PillEffects = new Dictionary<int, Action<Player>>
         {
@@ -151,13 +151,13 @@ namespace CrazyPills
                     }
                     if (Warhead.IsInProgress)
                     {
-                        Map.Broadcast(8, Plugin.Instance.Translation.Broadcasts.WarHeadDisabled, Broadcast.BroadcastFlags.Normal, false);
+                        Map.Broadcast(8, Plugin.Instance.Config.Broadcasts.WarHeadDisabled, Broadcast.BroadcastFlags.Normal, false);
                         Warhead.Stop();
                         return;
                     }
 
                     Warhead.Start();
-                    Map.Broadcast(8, Plugin.Instance.Translation.Broadcasts.WarHeadEnabled, Broadcast.BroadcastFlags.Normal, false);
+                    Map.Broadcast(8, Plugin.Instance.Config.Broadcasts.WarHeadEnabled, Broadcast.BroadcastFlags.Normal, false);
                 }
             },
             {
@@ -242,9 +242,7 @@ namespace CrazyPills
                     if (alive.Count == 0)
                         return;
                     Player randAlive = alive[Rand.Next(alive.Count)];
-                    Vector3 prePosition = p.Position;
-                    p.Position = randAlive.Position;
-                    randAlive.Position = prePosition;
+                    (p.Position, randAlive.Position) = (randAlive.Position, p.Position);
 
                     if (!Configs.ShowHints) return;
                     p.ShowHint(HintText.Switching, 8f);

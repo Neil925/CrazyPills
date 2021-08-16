@@ -7,7 +7,7 @@ using SCP106E = Exiled.Events.Handlers.Scp106;
 
 namespace CrazyPills
 {
-    public class Plugin : Plugin<Config, Translation>
+    public class Plugin : Plugin<Config>
     {
         public override string Author { get; } = "Neil";
 
