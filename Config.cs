@@ -19,11 +19,5 @@ namespace CrazyPills
 
         [Description("Whether or not to show a hint during certain Pain Killer consumption events.")]
         public bool ShowHints { get; private set; } = true;
-
-        [Description("Translations for hints triggered by pill events.")]
-        public HintTextTranslations Hints = new HintTextTranslations();
-
-        [Description("Translations for broadcasts triggered by pill events.")]
-        public BroadcastTextTranslations Broadcasts = new BroadcastTextTranslations();
     }
 }

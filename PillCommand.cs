@@ -1,5 +1,6 @@
 ﻿using System;
 using CommandSystem;
+using CrazyPills.Translations;
 using Exiled.API.Features;
 using Exiled.Permissions.Extensions;
 using RemoteAdmin;
@@ -9,13 +10,14 @@ namespace CrazyPills
     [CommandHandler(typeof(RemoteAdminCommandHandler))]
     public class PillCommand : ICommand
     {
-        public string Command { get; } = "pill";
+        public string Command => "pill";
 
         public string[] Aliases { get; } = { "pills" };
 
-        public string Description { get; } = "Instantly uses a pill.";
+        public string Description => "Instantly uses a pill.";
 
         public Random Rand = new Random();
+        public Command Translations = Plugin.Instance.Translation.Command;
 
         public bool Execute(ArraySegment<string> arguments, ICommandSender sender, out string response)
         {
@@ -23,13 +25,13 @@ namespace CrazyPills
 
             if (!p.CheckPermission("cp.pill"))
             {
-                response = "You do not have the permission to use this command. Missing command module: cp.pill.";
+                response = Translations.MissingPermission;
                 return false;
             }
 
             if (!p.IsAlive)
             {
-                response = "This command cannot be used as a spectator.";
+                response = Translations.DeniedSpectator;
                 return false;
             }
 
@@ -46,7 +48,7 @@ namespace CrazyPills
                 {
                     if (num > PillEvents.PillEffects.Count || num < 1)
                     {
-                        response = $"Accepted range is 1 through {PillEvents.PillEffects.Count}.";
+                        response = Translations.InvalidRange.Replace("{Count}", PillEvents.PillEffects.Count.ToString());
                         return false;
                     }
 
@@ -56,16 +58,16 @@ namespace CrazyPills
                 {
                     if (arguments.At(0) != "help")
                     {
-                        response = $"Incorrect use of command. Either leave arguments empty to have a random pill effect occur or provide the number that corresponds with the event you are attempting. Accepted range is 1 through {PillEvents.PillEffects.Count}.";
+                        response = Translations.IncorrectUse.Replace("{Count}", PillEvents.PillEffects.Count.ToString());
                         return false;
                     }
 
-                    response = $"Provide a number based on which pill event you'd like to occur or leave arguments empty for a random event. Accepted range is 1 through {PillEvents.PillEffects.Count}.";
+                    response = Translations.Help.Replace("{Count}", PillEvents.PillEffects.Count.ToString());
                     return true;
                 }
             }
 
-            response = "We do be poppin'";
+            response = Translations.Success;
             return true;
         }
     }

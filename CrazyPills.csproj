@@ -33,8 +33,10 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Config.cs" />
-    <Compile Include="Translations\BroadcastTextTranslations.cs" />
-    <Compile Include="Translations\HintTextTranslations.cs" />
+    <Compile Include="Translation.cs" />
+    <Compile Include="Translations\Broadcast.cs" />
+    <Compile Include="Translations\Command.cs" />
+    <Compile Include="Translations\Hint.cs" />
     <Compile Include="Handlers.cs" />
     <Compile Include="EventHandlers.cs" />
     <Compile Include="PillCommand.cs" />

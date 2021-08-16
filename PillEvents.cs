@@ -14,7 +14,7 @@ namespace CrazyPills
     {
         private static readonly Random Rand = new Random();
         private static readonly Config Configs = Plugin.Instance.Config;
-        private static readonly HintTextTranslations HintText = Plugin.Instance.Config.Hints;
+        private static readonly Hint HintText = Plugin.Instance.Translation.Hints;
 
         public static Dictionary<int, Action<Player>> PillEffects = new Dictionary<int, Action<Player>>
         {
@@ -151,13 +151,13 @@ namespace CrazyPills
                     }
                     if (Warhead.IsInProgress)
                     {
-                        Map.Broadcast(8, Plugin.Instance.Config.Broadcasts.WarHeadDisabled, Broadcast.BroadcastFlags.Normal, false);
+                        Map.Broadcast(8, Plugin.Instance.Translation.Broadcasts.WarHeadDisabled, Broadcast.BroadcastFlags.Normal, false);
                         Warhead.Stop();
                         return;
                     }
 
                     Warhead.Start();
-                    Map.Broadcast(8, Plugin.Instance.Config.Broadcasts.WarHeadEnabled, Broadcast.BroadcastFlags.Normal, false);
+                    Map.Broadcast(8, Plugin.Instance.Translation.Broadcasts.WarHeadEnabled, Broadcast.BroadcastFlags.Normal, false);
                 }
             },
             {
