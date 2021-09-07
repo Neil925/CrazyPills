@@ -9,15 +9,15 @@ namespace CrazyPills
 {
     public class Plugin : Plugin<Config, Translation>
     {
-        public override string Author { get; } = "Neil";
+        public override string Author => "Neil";
 
-        public override string Name { get; } = "Crazy Pills";
+        public override string Name => "Crazy Pills";
 
-        public override string Prefix { get; } = "cp";
+        public override string Prefix => "cp";
 
-        public override Version Version { get; } = new Version(1, 4, 1);
+        public override Version Version => new Version(2, 4, 1);
 
-        public override Version RequiredExiledVersion { get; } = new Version(2, 12, 0);
+        public override Version RequiredExiledVersion => new Version(3, 0, 0);
 
         public static Plugin Instance;
 
@@ -31,7 +31,7 @@ namespace CrazyPills
 
             _handler = new EventHandlers();
 
-            PlayerE.UsingMedicalItem += _handler.OnUsingMedicalItem;
+            PlayerE.ItemUsed += _handler.OnItemUsed;
             PlayerE.Hurting += _handler.OnHurting;
             PlayerE.Spawning += _handler.OnSpawning;
             SCP106E.Teleporting += _handler.OnTeleporting;
@@ -41,7 +41,7 @@ namespace CrazyPills
 
         public override void OnDisabled()
         {
-            PlayerE.UsingMedicalItem -= _handler.OnUsingMedicalItem;
+            PlayerE.ItemUsed -= _handler.OnItemUsed;
             PlayerE.Hurting -= _handler.OnHurting;
             PlayerE.Spawning -= _handler.OnSpawning;
             SCP106E.Teleporting -= _handler.OnTeleporting;

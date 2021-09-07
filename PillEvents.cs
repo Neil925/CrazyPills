@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Exiled.API.Enums;
 using Exiled.API.Features;
 using MEC;
 using UnityEngine;
 using CrazyPills.Translations;
+using Exiled.API.Features.Items;
+using InventorySystem.Items;
 using Random = System.Random;
 
 namespace CrazyPills
@@ -41,7 +42,7 @@ namespace CrazyPills
                         p.Role = preRole;
                         Timing.CallDelayed(0.2f, () =>
                         {
-                            p.Inventory.Clear();
+                            p.ClearInventory();
                             p.Position = prePosition;
                         });
                     });
@@ -51,7 +52,7 @@ namespace CrazyPills
                 2, p =>
                 {
                     p.Health = p.MaxHealth;
-                    p.ArtificialHealth = 200f;
+                    p.ArtificialHealth = 200;
                 }
             },
             {
@@ -61,33 +62,41 @@ namespace CrazyPills
                         p.ShowHint(HintText.GunAndAmmo, 8f);
                     if (p.Role == RoleType.ClassD || p.Role == RoleType.Scientist)
                     {
-                        p.Inventory.AddNewItem(ItemType.GunUSP);
-                        p.Ammo[(int)AmmoType.Nato9] += 100;
+                        p.AddItem(ItemType.GunCOM18);
+                        p.Ammo[ItemType.Ammo9x19] += 100;
                         return;
                     }
 
-                    if (p.Role != RoleType.NtfLieutenant && p.Role != RoleType.NtfScientist)
+                    if (p.Role != RoleType.NtfCaptain && p.Role != RoleType.NtfSergeant && p.Role != RoleType.NtfSpecialist)
                     {
-                        p.Inventory.AddNewItem(ItemType.GunE11SR);
-                        p.Ammo[(int)AmmoType.Nato556] += 100;
+                        p.AddItem(ItemType.GunE11SR);
+                        p.Ammo[ItemType.Ammo762x39] += 100;
                         return;
                     }
 
-                    p.Inventory.AddNewItem(ItemType.GunLogicer);
-                    p.Ammo[(int)AmmoType.Nato762] += 100;
+                    p.AddItem(ItemType.GunLogicer);
+                    p.Ammo[ItemType.Ammo762x39] += 100;
                 }
             },
             {
                 4, p =>
                 {
                         List<Player> alive = Player.List.Where(x => x.Team != Team.RIP && x != p && x.Role != RoleType.Scp079).ToList();
-                        if (alive.Count == 0)
-                            return;
+
+                        if (alive.Count == 0) return;
+
                         p.Position = alive[Rand.Next(alive.Count)].Position;
                 }
             },
             {
-                5, p => Map.SpawnGrenade(p.Position, fuseTime: 0.1f, player: p)
+                5, p =>
+                {
+                    ExplosiveGrenade grenade = new ExplosiveGrenade(ItemType.SCP018, p)
+                    {
+                        FuseTime = 0.1f
+                    };
+                    grenade.SpawnActive(p.Position, p);
+                }
             },
             {
                 6, p =>
@@ -99,10 +108,10 @@ namespace CrazyPills
             {
                 7, p =>
                 {
-                    Map.SpawnGrenade(p.Position, GrenadeType.Scp018, 7f, player: p);
-                    Map.SpawnGrenade(p.Position, GrenadeType.Scp018, 7f, player: p);
-                    Map.SpawnGrenade(p.Position, GrenadeType.Scp018, 7f, player: p);
-                    Map.SpawnGrenade(p.Position, GrenadeType.Scp018, 7f, player: p);
+                    new ExplosiveGrenade(ItemType.SCP018).SpawnActive(p.Position, p);
+                    new ExplosiveGrenade(ItemType.SCP018).SpawnActive(p.Position, p);
+                    new ExplosiveGrenade(ItemType.SCP018).SpawnActive(p.Position, p);
+                    new ExplosiveGrenade(ItemType.SCP018).SpawnActive(p.Position, p);
                 }
             },
             {
@@ -128,9 +137,9 @@ namespace CrazyPills
                 10, p =>
                 {
                     p.DropItems();
-                    p.Inventory.items.Clear();
+                    p.ClearInventory();
                     for (byte i = 0; i < 8; i++)
-                        p.Inventory.AddNewItem(ItemType.Painkillers);
+                        p.AddItem(ItemType.Painkillers);
                 }
             },
             {
@@ -170,8 +179,9 @@ namespace CrazyPills
                     if (dead.Any())
                     {
                         Player randDead = dead[Rand.Next(dead.Count)];
-                        List<Inventory.SyncItemInfo> preInv = new List<Inventory.SyncItemInfo>();
-                        preInv.AddRange(p.Inventory.items);
+                        List<ItemBase> preInv = new List<ItemBase>();
+
+                        preInv.AddRange(p.Inventory.UserInventory.Items.Values);
                         prePosition = p.Position;
                         RoleType preRole = p.Role;
                         p.Role = RoleType.Spectator;
@@ -179,7 +189,8 @@ namespace CrazyPills
                         Timing.CallDelayed(0.2f, () =>
                         {
                             randDead.Position = prePosition;
-                            randDead.ResetInventory(preInv);
+                            foreach (var item in preInv)
+                                randDead.AddItem(item);
                         });
                         if (!Configs.ShowHints) return;
                         p.ShowHint(HintText.Replacement["Replaced"], 8f);
@@ -208,28 +219,43 @@ namespace CrazyPills
                     {
                         case RoleType.ClassD:
                             p.DropItems();
-                            p.Role = RoleType.ChaosInsurgency;
+                            p.Role = RoleType.ChaosConscript;
+                            Timing.CallDelayed(0.4f, () => p.Position = prePosition);
+                            break;
+                        case RoleType.ChaosConscript:
+                            p.DropItems();
+                            p.Role = RoleType.ChaosRifleman;
+                            Timing.CallDelayed(0.4f, () => p.Position = prePosition);
+                            break;
+                        case RoleType.ChaosRifleman:
+                            p.DropItems();
+                            p.Role = RoleType.ChaosRepressor;
+                            Timing.CallDelayed(0.4f, () => p.Position = prePosition);
+                            break;
+                        case RoleType.ChaosRepressor:
+                            p.DropItems();
+                            p.Role = RoleType.ChaosMarauder;
                             Timing.CallDelayed(0.4f, () => p.Position = prePosition);
                             break;
                         case RoleType.Scientist:
                             p.DropItems();
-                            p.Role = RoleType.NtfScientist;
+                            p.Role = RoleType.NtfSpecialist;
                             Timing.CallDelayed(0.4f, () => p.Position = prePosition); break;
                         case RoleType.FacilityGuard:
                             p.DropItems();
-                            p.Role = RoleType.NtfCadet;
+                            p.Role = RoleType.NtfPrivate;
                             Timing.CallDelayed(0.4f, () => p.Position = prePosition); break;
-                        case RoleType.NtfCadet:
+                        case RoleType.NtfPrivate:
                             p.DropItems();
-                            p.Role = RoleType.NtfLieutenant;
+                            p.Role = RoleType.NtfSergeant;
                             Timing.CallDelayed(0.4f, () => p.Position = prePosition); break;
-                        case RoleType.NtfLieutenant:
+                        case RoleType.NtfSergeant:
                             p.DropItems();
-                            p.Role = RoleType.NtfCommander;
+                            p.Role = RoleType.NtfCaptain;
                             Timing.CallDelayed(0.4f, () => p.Position = prePosition); break;
                         default:
                             p.DropItems();
-                            p.Inventory.AddNewItem(ItemType.KeycardO5); break;
+                            p.AddItem(ItemType.KeycardO5); break;
                     }
                     if (Configs.ShowHints)
                         p.ShowHint(HintText.Promotion, 8f);
