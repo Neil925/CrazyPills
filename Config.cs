@@ -13,23 +13,23 @@ namespace CrazyPills
         public bool SpawnWithPills { get; private set; } = true;
 
         [Description("A list of possible pill effects that are allowed to occur.")]
-        public List<string> PillEffects { get; private set; } = new List<string>
+        public List<PillEffectType> PillEffects { get; private set; } = new List<PillEffectType>
         {
-            PillEffectType.Kill.ToString(),
-            PillEffectType.Zombify.ToString(),
-            PillEffectType.FullHeal.ToString(),
-            PillEffectType.GiveGun.ToString(),
-            PillEffectType.Goto.ToString(),
-            PillEffectType.Combustion.ToString(),
-            PillEffectType.Shrink.ToString(),
-            PillEffectType.Balls.ToString(),
-            PillEffectType.Invincibility.ToString(),
-            PillEffectType.Bring.ToString(),
-            PillEffectType.FullPK.ToString(),
-            PillEffectType.WarheadEvent.ToString(),
-            PillEffectType.SwitchDead.ToString(),
-            PillEffectType.Promote.ToString(),
-            PillEffectType.Switch.ToString()
+            PillEffectType.Kill,
+            PillEffectType.Zombify,
+            PillEffectType.FullHeal,
+            PillEffectType.GiveGun,
+            PillEffectType.Goto,
+            PillEffectType.Combustion,
+            PillEffectType.Shrink,
+            PillEffectType.Balls,
+            PillEffectType.Invincibility,
+            PillEffectType.Bring,
+            PillEffectType.FullPK,
+            PillEffectType.WarheadEvent,
+            PillEffectType.SwitchDead,
+            PillEffectType.Promote,
+            PillEffectType.Switch
         };
 
         [Description("If the above value is true, this dictates the percentage chance of the warhead starting/stopping with the event.")]

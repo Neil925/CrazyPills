@@ -36,7 +36,7 @@ namespace CrazyPills
             Switch
         }
 
-        public static List<PillEffectType> ActiveEnums() => Enum.GetValues(typeof(PillEffectType)).Cast<PillEffectType>().Where(e => Plugin.Instance.Config.PillEffects.Contains(e.ToString())).ToList();
+        public static List<PillEffectType> ActiveEnums() => Enum.GetValues(typeof(PillEffectType)).Cast<PillEffectType>().Where(e => Plugin.Instance.Config.PillEffects.Contains(e)).ToList();
         
         public static void RunPillEffect(PillEffectType type, Player p)
         {
