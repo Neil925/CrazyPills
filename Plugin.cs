@@ -15,13 +15,9 @@ namespace CrazyPills
 
         public override string Prefix => "cp";
 
-        public override Version Version => new Version(2, 4, 1);
-
         public override Version RequiredExiledVersion => new Version(3, 0, 0);
 
         public static Plugin Instance;
-
-        public List<Player> Invincible = new List<Player>();
 
         private EventHandlers _handler;
 
@@ -32,9 +28,7 @@ namespace CrazyPills
             _handler = new EventHandlers();
 
             PlayerE.ItemUsed += _handler.OnItemUsed;
-            PlayerE.Hurting += _handler.OnHurting;
-            PlayerE.Spawning += _handler.OnSpawning;
-            SCP106E.Teleporting += _handler.OnTeleporting;
+            PlayerE.ChangingRole += _handler.OnChangingRole;
 
             base.OnEnabled();
         }
@@ -42,9 +36,7 @@ namespace CrazyPills
         public override void OnDisabled()
         {
             PlayerE.ItemUsed -= _handler.OnItemUsed;
-            PlayerE.Hurting -= _handler.OnHurting;
-            PlayerE.Spawning -= _handler.OnSpawning;
-            SCP106E.Teleporting -= _handler.OnTeleporting;
+            PlayerE.ChangingRole -= _handler.OnChangingRole;
 
             _handler = null;
             
@@ -52,6 +44,5 @@ namespace CrazyPills
 
             base.OnDisabled();
         }
-
     }
 }

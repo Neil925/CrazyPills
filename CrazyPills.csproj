@@ -37,10 +37,9 @@
     <Compile Include="Translations\Broadcast.cs" />
     <Compile Include="Translations\Command.cs" />
     <Compile Include="Translations\Hint.cs" />
-    <Compile Include="Handlers.cs" />
     <Compile Include="EventHandlers.cs" />
     <Compile Include="PillCommand.cs" />
-    <Compile Include="PillEvents.cs" />
+    <Compile Include="Handlers.cs" />
     <Compile Include="Plugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

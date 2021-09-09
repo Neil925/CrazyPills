@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using CommandSystem;
 using CrazyPills.Translations;
 using Exiled.API.Features;
@@ -12,7 +14,7 @@ namespace CrazyPills
     {
         public string Command => "pill";
 
-        public string[] Aliases { get; } = { "pills" };
+        public string[] Aliases => new[] { "pills" };
 
         public string Description => "Instantly uses a pill.";
 
@@ -39,30 +41,34 @@ namespace CrazyPills
 
             if (arguments.Count == 0)
             {
-                num = Rand.Next(PillEvents.PillEffects.Count - 1);
-                Handlers.PillEffect(num, p);
+                List<Handlers.PillEffectType>  pillTypes = Handlers.ActiveEnums();
+
+                num = Rand.Next(pillTypes.Count);
+                Handlers.RunPillEffect(pillTypes[num], p);
             }
             else
             {
+                int pillTypesCount = Enum.GetValues(typeof(Handlers.PillEffectType)).Length;
+
                 if (int.TryParse(arguments.At(0), out num))
                 {
-                    if (num > PillEvents.PillEffects.Count || num < 1)
+                    if (num > pillTypesCount || num < 1)
                     {
-                        response = Translations.InvalidRange.Replace("{Count}", PillEvents.PillEffects.Count.ToString());
+                        response = Translations.InvalidRange.Replace("{Count}", pillTypesCount.ToString());
                         return false;
                     }
 
-                    Handlers.PillEffect(num - 1, p);
+                    Handlers.RunPillEffect((Handlers.PillEffectType)num, p);
                 }
                 else
                 {
                     if (arguments.At(0) != "help")
                     {
-                        response = Translations.IncorrectUse.Replace("{Count}", PillEvents.PillEffects.Count.ToString());
+                        response = Translations.IncorrectUse.Replace("{Count}", pillTypesCount.ToString());
                         return false;
                     }
 
-                    response = Translations.Help.Replace("{Count}", PillEvents.PillEffects.Count.ToString());
+                    response = Translations.Help.Replace("{Count}", pillTypesCount.ToString());
                     return true;
                 }
             }
