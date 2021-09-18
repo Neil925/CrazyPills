@@ -14,10 +14,10 @@ namespace CrazyPills.Translations
         public string InvalidRange { get; private set; } = "Accepted range is 1 through {Count}.";
 
         [Description("Response when the user enters invalid arguments for the command.")]
-        public string IncorrectUse { get; private set; } = "Incorrect use of command. Either leave arguments empty to have a random pill effect occur or provide the number that corresponds with the event you are attempting. Accepted range is 1 through {Count}.";
+        public string IncorrectUse { get; private set; } = "Incorrect use of command. Either leave arguments empty to have a random pill effect occur or provide the number or name that corresponds with the event you are attempting. Accepted number range is 1 through {Count}.";
 
         [Description("Response when the user types 'help' as an argument.")]
-        public string Help { get; private set; } = "Provide a number based on which pill event you'd like to occur or leave arguments empty for a random event. Accepted range is 1 through {Count}.";
+        public string Help { get; private set; } = "Provide a number or name that corresponds with the pill event you'd like to occur or leave arguments empty for a random event. Accepted number range is 1 through {Count}.";
 
         [Description("Response when the command is succesful.")]
         public string Success { get; private set; } = "We do be poppin'";

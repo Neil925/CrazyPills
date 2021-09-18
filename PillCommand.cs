@@ -23,15 +23,15 @@ namespace CrazyPills
 
         public bool Execute(ArraySegment<string> arguments, ICommandSender sender, out string response)
         {
-            var p = Player.Get(((PlayerCommandSender)sender).ReferenceHub);
+            var player = Player.Get(((PlayerCommandSender)sender).ReferenceHub);
 
-            if (!p.CheckPermission("cp.pill"))
+            if (!player.CheckPermission("cp.pill"))
             {
                 response = Translations.MissingPermission;
                 return false;
             }
 
-            if (!p.IsAlive)
+            if (!player.IsAlive)
             {
                 response = Translations.DeniedSpectator;
                 return false;
@@ -41,40 +41,41 @@ namespace CrazyPills
 
             if (arguments.Count == 0)
             {
-                List<Handlers.PillEffectType>  pillTypes = Handlers.ActiveEnums();
+                List<Handlers.PillEffectType> pillTypes = Handlers.ActiveEnums();
 
                 num = Rand.Next(pillTypes.Count);
-                Handlers.RunPillEffect(pillTypes[num], p);
+                Handlers.RunPillEffect(pillTypes[num], player);
+
+                response = Translations.Success;
+                return true;
             }
-            else
+
+            if (Enum.GetValues(typeof(Handlers.PillEffectType)).Cast<Handlers.PillEffectType>().Any(e => string.Equals(e.ToString(), arguments.At(0), StringComparison.CurrentCultureIgnoreCase)))
             {
-                int pillTypesCount = Enum.GetValues(typeof(Handlers.PillEffectType)).Length;
+                Handlers.RunPillEffect(Enum.GetValues(typeof(Handlers.PillEffectType)).Cast<Handlers.PillEffectType>().FirstOrDefault(e => string.Equals(e.ToString(), arguments.At(0), StringComparison.CurrentCultureIgnoreCase)), player);
 
-                if (int.TryParse(arguments.At(0), out num))
-                {
-                    if (num > pillTypesCount || num < 1)
-                    {
-                        response = Translations.InvalidRange.Replace("{Count}", pillTypesCount.ToString());
-                        return false;
-                    }
-
-                    Handlers.RunPillEffect((Handlers.PillEffectType)num, p);
-                }
-                else
-                {
-                    if (arguments.At(0) != "help")
-                    {
-                        response = Translations.IncorrectUse.Replace("{Count}", pillTypesCount.ToString());
-                        return false;
-                    }
-
-                    response = Translations.Help.Replace("{Count}", pillTypesCount.ToString());
-                    return true;
-                }
+                response = Translations.Success;
+                return true;
             }
 
-            response = Translations.Success;
-            return true;
+            int pillTypesCount = Enum.GetValues(typeof(Handlers.PillEffectType)).Length;
+
+            if (int.TryParse(arguments.At(0), out num) && num <= pillTypesCount && num >= 1)
+            {
+                Handlers.RunPillEffect((Handlers.PillEffectType)num, player);
+
+                response = Translations.Success;
+                return true;
+            }
+
+            if (arguments.At(0) == "help")
+            {
+                response = Translations.Help.Replace("{Count}", pillTypesCount.ToString());
+                return false;
+            }
+
+            response = Translations.IncorrectUse.Replace("{Count}", pillTypesCount.ToString());
+            return false;
         }
     }
 }

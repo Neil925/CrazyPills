@@ -32,6 +32,9 @@ namespace CrazyPills
             PillEffectType.Switch
         };
 
+        [Description("Whether or not SCPs are included in teleportation events.")]
+        public bool AllowSCPTeleportation { get; private set; } = true;
+
         [Description("If the above value is true, this dictates the percentage chance of the warhead starting/stopping with the event.")]
         public int WarheadStartStopChance { get; private set; } = 10;
 

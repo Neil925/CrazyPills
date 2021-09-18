@@ -129,14 +129,15 @@ namespace CrazyPills
         {
             if (Configs.ShowHints)
                 p.ShowHint(HintText.GunAndAmmo, 8f);
-            if (p.Role == RoleType.ClassD || p.Role == RoleType.Scientist)
+
+            if (!p.Items.Contains(new Item(ItemType.GunCOM18)))
             {
                 p.AddItem(ItemType.GunCOM18);
                 p.Ammo[ItemType.Ammo9x19] += 100;
                 return;
             }
-
-            if (p.Role != RoleType.NtfCaptain && p.Role != RoleType.NtfSergeant && p.Role != RoleType.NtfSpecialist)
+            
+            if (!p.Items.Contains(new Item(ItemType.GunE11SR)))
             {
                 p.AddItem(ItemType.GunE11SR);
                 p.Ammo[ItemType.Ammo762x39] += 100;
@@ -149,7 +150,7 @@ namespace CrazyPills
 
         private static void Goto(Player p)
         {
-            List<Player> alive = Player.List.Where(x => x.Team != Team.RIP && x != p && x.Role != RoleType.Scp079).ToList();
+            List<Player> alive = Player.List.Where(x => x.Team != Team.RIP && x != p && x.Role != RoleType.Scp079 && (x.Team != Team.SCP || Configs.AllowSCPTeleportation)).ToList();
 
             if (alive.Count == 0) return;
 
@@ -190,7 +191,7 @@ namespace CrazyPills
 
         private static void Bring(Player p)
         {
-            List<Player> alive = Player.List.Where(x => x.Team != Team.RIP && x != p && x.Role != RoleType.Scp079).ToList();
+            List<Player> alive = Player.List.Where(x => x.Team != Team.RIP && x != p && x.Role != RoleType.Scp079 && (x.Team != Team.SCP || Configs.AllowSCPTeleportation)).ToList();
             if (alive.Count == 0)
                 return;
             Player randAlive = alive[Rand.Next(alive.Count)];
@@ -259,7 +260,7 @@ namespace CrazyPills
                 return;
             }
 
-            List<Player> alive = Player.List.Where(x => x.Team != Team.RIP && x != p && x.Role != RoleType.Scp079).ToList();
+            List<Player> alive = Player.List.Where(x => x.Team != Team.RIP && x != p && x.Role != RoleType.Scp079 && (x.Team != Team.SCP || Configs.AllowSCPTeleportation)).ToList();
             if (alive.Count == 0)
                 return;
             Player randAlive = alive[Rand.Next(alive.Count)];
@@ -317,13 +318,14 @@ namespace CrazyPills
                     p.DropItems();
                     p.AddItem(ItemType.KeycardO5); break;
             }
+
             if (Configs.ShowHints)
                 p.ShowHint(HintText.Promotion, 8f);
         }
 
         private static void Switch(Player p)
         {
-            List<Player> alive = Player.List.Where(x => x.Team != Team.RIP && x != p && x.Role != RoleType.Scp079).ToList();
+            List<Player> alive = Player.List.Where(x => x.Team != Team.RIP && x != p && x.Role != RoleType.Scp079 && (x.Team != Team.SCP || Configs.AllowSCPTeleportation)).ToList();
             if (alive.Count == 0)
                 return;
             Player randAlive = alive[Rand.Next(alive.Count)];
