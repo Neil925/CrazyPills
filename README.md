@@ -26,7 +26,7 @@ When enabling this plugin, 15 randomized events may occur during the consumption
 ### Command
 A command is also added with this plugin. That being a remote admin console command called `pill` or `pills`.
 The command allows for instantaneous occurrence of the effects of consuming a Pain Killer and requires the `cp.pill` permission node in the Exiled `permissions.yml`.
-The command accepts one optional argument to choose which pill effect the command sender would like to trigger. If left empty, it will be randomized.
+The command accepts one optional argument, either a string name or a number, to choose which pill effect the command sender would like to trigger. If left empty, it will be randomized in accordance to the config allowed PillEffects.
 
 ### Significant Configs Values
 ```
@@ -35,6 +35,10 @@ Description: Whether or not all players are guaranteed to spawn with pills.
 
 List<PillEffectType> PillEffects (All by default)
 Description: A list of possible pill effects that are allowed to occur.
+
+Boolean AllowSCPTeleportation (true by default)
+Description: Whether or not SCPs are included in teleportation events.
+
 
 Integer WarheadStartStopChance (10 by default)
 Description: If "WarheadStatStop" is true, this dictates the percentage chance of the warhead starting/stopping with the event.
