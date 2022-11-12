@@ -5,8 +5,10 @@ using Exiled.API.Features;
 using MEC;
 using UnityEngine;
 using CrazyPills.Translations;
+using Exiled.API.Enums;
 using Exiled.API.Features.Items;
 using InventorySystem.Items;
+
 using Random = System.Random;
 
 namespace CrazyPills
@@ -29,15 +31,16 @@ namespace CrazyPills
             Balls,
             Invincibility,
             Bring,
-            FullPK,
+            FullPk,
             WarheadEvent,
             SwitchDead,
             Promote,
             Switch
         }
 
-        public static List<PillEffectType> ActiveEnums() => Enum.GetValues(typeof(PillEffectType)).Cast<PillEffectType>().Where(e => Plugin.Instance.Config.PillEffects.Contains(e)).ToList();
-        
+        public static List<PillEffectType> ActiveEnums() => Enum.GetValues(typeof(PillEffectType))
+            .Cast<PillEffectType>().Where(e => Plugin.Instance.Config.PillEffects.Contains(e)).ToList();
+
         public static void RunPillEffect(PillEffectType type, Player p)
         {
             switch (type)
@@ -72,8 +75,8 @@ namespace CrazyPills
                 case PillEffectType.Bring:
                     Bring(p);
                     break;
-                case PillEffectType.FullPK:
-                    FullPK(p);
+                case PillEffectType.FullPk:
+                    FullPk(p);
                     break;
                 case PillEffectType.WarheadEvent:
                     WarheadEvent(p);
@@ -96,7 +99,7 @@ namespace CrazyPills
         {
             if (Configs.ShowHints)
                 p.ShowHint(HintText.DeathEvent, 8f);
-            Timing.CallDelayed(6f, () => p.Kill());
+            Timing.CallDelayed(6f, () => p.Kill(DamageType.Unknown));
         }
 
         private static void Zombify(Player p)
@@ -104,13 +107,13 @@ namespace CrazyPills
             RoleType preRole = p.Role;
             Vector3 prePosition = p.Position;
             p.DropItems();
-            p.Role = RoleType.Scp0492;
+            p.Role.Type = RoleType.Scp0492;
             Timing.CallDelayed(0.4f, () => p.Position = prePosition);
             Timing.CallDelayed(30f, () =>
             {
                 if (!p.IsAlive) return;
                 prePosition = p.Position;
-                p.Role = preRole;
+                p.Role.Type = preRole;
                 Timing.CallDelayed(0.2f, () =>
                 {
                     p.ClearInventory();
@@ -130,27 +133,34 @@ namespace CrazyPills
             if (Configs.ShowHints)
                 p.ShowHint(HintText.GunAndAmmo, 8f);
 
-            if (!p.Items.Contains(new Item(ItemType.GunCOM18)))
-            {
-                p.AddItem(ItemType.GunCOM18);
-                p.Ammo[ItemType.Ammo9x19] += 100;
-                return;
-            }
-            
-            if (!p.Items.Contains(new Item(ItemType.GunE11SR)))
-            {
-                p.AddItem(ItemType.GunE11SR);
-                p.Ammo[ItemType.Ammo762x39] += 100;
-                return;
-            }
+            Firearm gun;
 
-            p.AddItem(ItemType.GunLogicer);
-            p.Ammo[ItemType.Ammo762x39] += 100;
+            if (p.Items.Any(x => x.Type == ItemType.GunE11SR))
+                gun = Item.Create(ItemType.GunLogicer) as Firearm;
+            else if (p.Items.All(x => x.Type != ItemType.GunE11SR))
+                gun = Item.Create(ItemType.GunE11SR) as Firearm;
+            else if (p.Items.All(x => x.Type != ItemType.GunAK))
+                gun = Item.Create(ItemType.GunAK) as Firearm;
+            else if (p.Items.All(x => x.Type != ItemType.GunCrossvec))
+                gun = Item.Create(ItemType.GunCrossvec) as Firearm;
+            else if (p.Items.All(x => x.Type != ItemType.GunShotgun))
+                gun = Item.Create(ItemType.GunShotgun) as Firearm;
+            else if (p.Items.All(x => x.Type != ItemType.GunFSP9))
+                gun = Item.Create(ItemType.GunFSP9) as Firearm;
+            else if (p.Items.All(x => x.Type != ItemType.GunRevolver))
+                gun = Item.Create(ItemType.GunRevolver) as Firearm;
+            else
+                gun = Item.Create(ItemType.GunCOM18) as Firearm;
+
+            gun.Give(p);
+            p.AddAmmo(gun.AmmoType, 100);
         }
 
         private static void Goto(Player p)
         {
-            List<Player> alive = Player.List.Where(x => x.Team != Team.RIP && x != p && x.Role != RoleType.Scp079 && (x.Team != Team.SCP || Configs.AllowSCPTeleportation)).ToList();
+            List<Player> alive = Player.List.Where(x =>
+                x.Role.Team != Team.RIP && x != p && x.Role != RoleType.Scp079 &&
+                (x.Role.Team != Team.SCP || Configs.AllowSCPTeleportation)).ToList();
 
             if (alive.Count == 0) return;
 
@@ -159,10 +169,9 @@ namespace CrazyPills
 
         private static void Combustion(Player p)
         {
-            ExplosiveGrenade grenade = new ExplosiveGrenade(ItemType.SCP018, p)
-            {
-                FuseTime = 0.1f
-            };
+            ExplosiveGrenade grenade = Item.Create(ItemType.GrenadeHE) as ExplosiveGrenade;
+            grenade.FuseTime = 0.1f;
+
             grenade.SpawnActive(p.Position, p);
         }
 
@@ -174,10 +183,8 @@ namespace CrazyPills
 
         private static void Balls(Player p)
         {
-            new ExplosiveGrenade(ItemType.SCP018).SpawnActive(p.Position, p);
-            new ExplosiveGrenade(ItemType.SCP018).SpawnActive(p.Position, p);
-            new ExplosiveGrenade(ItemType.SCP018).SpawnActive(p.Position, p);
-            new ExplosiveGrenade(ItemType.SCP018).SpawnActive(p.Position, p);
+            for (int i = 0; i < 5; i++)
+                ((ExplosiveGrenade)Item.Create(ItemType.SCP018)).SpawnActive(p.Position, p);
         }
 
         private static void Invincibility(Player p)
@@ -186,19 +193,20 @@ namespace CrazyPills
                 p.ShowHint(HintText.Invincibility, 8f);
             p.IsGodModeEnabled = true;
             Timing.CallDelayed(20f, () => p.IsGodModeEnabled = false);
-
         }
 
         private static void Bring(Player p)
         {
-            List<Player> alive = Player.List.Where(x => x.Team != Team.RIP && x != p && x.Role != RoleType.Scp079 && (x.Team != Team.SCP || Configs.AllowSCPTeleportation)).ToList();
+            List<Player> alive = Player.List.Where(x =>
+                x.Role.Team != Team.RIP && x != p && x.Role != RoleType.Scp079 &&
+                (x.Role.Team != Team.SCP || Configs.AllowSCPTeleportation)).ToList();
             if (alive.Count == 0)
                 return;
             Player randAlive = alive[Rand.Next(alive.Count)];
             randAlive.Position = p.Position;
         }
 
-        private static void FullPK(Player p)
+        private static void FullPk(Player p)
         {
             p.DropItems();
             p.ClearInventory();
@@ -208,11 +216,13 @@ namespace CrazyPills
 
         private static void WarheadEvent(Player p)
         {
-            if (Configs.WarheadStartStopChance > 0 && Configs.WarheadStartStopChance < 100 && Rand.Next(101) > Configs.WarheadStartStopChance)
+            if (Configs.WarheadStartStopChance > 0 && Configs.WarheadStartStopChance < 100 &&
+                Rand.Next(101) > Configs.WarheadStartStopChance)
             {
                 Warhead.LeverStatus = !Warhead.LeverStatus;
                 if (Configs.ShowHints)
-                    p.ShowHint(string.Format(HintText.LeverSwitch.Replace("{LeverStatus}", Warhead.LeverStatus.ToString().ToLower()), 8f));
+                    p.ShowHint(string.Format(
+                        HintText.LeverSwitch.Replace("{LeverStatus}", Warhead.LeverStatus.ToString().ToLower()), 8f));
                 return;
             }
 
@@ -221,6 +231,7 @@ namespace CrazyPills
                 Log.Warn("Config value 'WarheadStartStopChance' must be greater than 0 and less than 100.");
                 return;
             }
+
             if (Warhead.IsInProgress)
             {
                 Map.Broadcast(8, Plugin.Instance.Translation.Broadcasts.WarHeadDisabled);
@@ -241,18 +252,22 @@ namespace CrazyPills
             if (dead.Any())
             {
                 Player randDead = dead[Rand.Next(dead.Count)];
-                List<ItemBase> preInv = new List<ItemBase>();
+                List<ItemType> preInv = new List<ItemType>();
+                Dictionary<ItemType, ushort> preAmmo = p.Ammo;
 
-                preInv.AddRange(p.Inventory.UserInventory.Items.Values);
+                preInv.AddRange(p.Items.Select(x => x.Type));
                 prePosition = p.Position;
                 RoleType preRole = p.Role;
-                p.Role = RoleType.Spectator;
-                randDead.Role = preRole;
-                Timing.CallDelayed(0.2f, () =>
+                
+                p.Role.Type = RoleType.Spectator;
+                randDead.Role.Type = preRole;
+                Timing.CallDelayed(1f, () =>
                 {
                     randDead.Position = prePosition;
                     foreach (var item in preInv)
                         randDead.AddItem(item);
+                    foreach (var ammo in preAmmo) 
+                        randDead.AddAmmo(ammo.Key, ammo.Value);
                 });
                 if (!Configs.ShowHints) return;
                 p.ShowHint(HintText.Replacement["Replaced"], 8f);
@@ -260,7 +275,9 @@ namespace CrazyPills
                 return;
             }
 
-            List<Player> alive = Player.List.Where(x => x.Team != Team.RIP && x != p && x.Role != RoleType.Scp079 && (x.Team != Team.SCP || Configs.AllowSCPTeleportation)).ToList();
+            List<Player> alive = Player.List.Where(x =>
+                x.Role.Team != Team.RIP && x != p && x.Role != RoleType.Scp079 &&
+                (x.Role.Team != Team.SCP || Configs.AllowSCPTeleportation)).ToList();
             if (alive.Count == 0)
                 return;
             Player randAlive = alive[Rand.Next(alive.Count)];
@@ -276,47 +293,52 @@ namespace CrazyPills
         private static void Promote(Player p)
         {
             Vector3 prePosition = p.Position;
-            switch (p.Role)
+            switch (p.Role.Type)
             {
                 case RoleType.ClassD:
                     p.DropItems();
-                    p.Role = RoleType.ChaosConscript;
+                    p.Role.Type = RoleType.ChaosConscript;
                     Timing.CallDelayed(0.4f, () => p.Position = prePosition);
                     break;
                 case RoleType.ChaosConscript:
                     p.DropItems();
-                    p.Role = RoleType.ChaosRifleman;
+                    p.Role.Type = RoleType.ChaosRifleman;
                     Timing.CallDelayed(0.4f, () => p.Position = prePosition);
                     break;
                 case RoleType.ChaosRifleman:
                     p.DropItems();
-                    p.Role = RoleType.ChaosRepressor;
+                    p.Role.Type = RoleType.ChaosRepressor;
                     Timing.CallDelayed(0.4f, () => p.Position = prePosition);
                     break;
                 case RoleType.ChaosRepressor:
                     p.DropItems();
-                    p.Role = RoleType.ChaosMarauder;
+                    p.Role.Type = RoleType.ChaosMarauder;
                     Timing.CallDelayed(0.4f, () => p.Position = prePosition);
                     break;
                 case RoleType.Scientist:
                     p.DropItems();
-                    p.Role = RoleType.NtfSpecialist;
-                    Timing.CallDelayed(0.4f, () => p.Position = prePosition); break;
+                    p.Role.Type = RoleType.NtfSpecialist;
+                    Timing.CallDelayed(0.4f, () => p.Position = prePosition);
+                    break;
                 case RoleType.FacilityGuard:
                     p.DropItems();
-                    p.Role = RoleType.NtfPrivate;
-                    Timing.CallDelayed(0.4f, () => p.Position = prePosition); break;
+                    p.Role.Type = RoleType.NtfPrivate;
+                    Timing.CallDelayed(0.4f, () => p.Position = prePosition);
+                    break;
                 case RoleType.NtfPrivate:
                     p.DropItems();
-                    p.Role = RoleType.NtfSergeant;
-                    Timing.CallDelayed(0.4f, () => p.Position = prePosition); break;
+                    p.Role.Type = RoleType.NtfSergeant;
+                    Timing.CallDelayed(0.4f, () => p.Position = prePosition);
+                    break;
                 case RoleType.NtfSergeant:
                     p.DropItems();
-                    p.Role = RoleType.NtfCaptain;
-                    Timing.CallDelayed(0.4f, () => p.Position = prePosition); break;
+                    p.Role.Type = RoleType.NtfCaptain;
+                    Timing.CallDelayed(0.4f, () => p.Position = prePosition);
+                    break;
                 default:
                     p.DropItems();
-                    p.AddItem(ItemType.KeycardO5); break;
+                    p.AddItem(ItemType.KeycardO5);
+                    break;
             }
 
             if (Configs.ShowHints)
@@ -325,9 +347,12 @@ namespace CrazyPills
 
         private static void Switch(Player p)
         {
-            List<Player> alive = Player.List.Where(x => x.Team != Team.RIP && x != p && x.Role != RoleType.Scp079 && (x.Team != Team.SCP || Configs.AllowSCPTeleportation)).ToList();
+            List<Player> alive = Player.List.Where(x =>
+                x.Role.Team != Team.RIP && x != p && x.Role != RoleType.Scp079 &&
+                (x.Role.Team != Team.SCP || Configs.AllowSCPTeleportation)).ToList();
             if (alive.Count == 0)
                 return;
+            
             Player randAlive = alive[Rand.Next(alive.Count)];
             (p.Position, randAlive.Position) = (randAlive.Position, p.Position);
 

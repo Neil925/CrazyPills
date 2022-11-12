@@ -25,7 +25,7 @@ namespace CrazyPills
             PillEffectType.Balls,
             PillEffectType.Invincibility,
             PillEffectType.Bring,
-            PillEffectType.FullPK,
+            PillEffectType.FullPk,
             PillEffectType.WarheadEvent,
             PillEffectType.SwitchDead,
             PillEffectType.Promote,

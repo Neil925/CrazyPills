@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using Exiled.API.Extensions;
 using Exiled.Events.EventArgs;
-
-using Timing = MEC.Timing;
 
 namespace CrazyPills
 {
@@ -10,7 +9,7 @@ namespace CrazyPills
     {
         private readonly Random _rand = new Random();
 
-        internal void OnItemUsed(UsedItemEventArgs ev)
+        internal void OnUsedItem(UsedItemEventArgs ev)
         {
             if (ev.Item.Type != ItemType.Painkillers) return;
 
@@ -22,7 +21,7 @@ namespace CrazyPills
 
         internal void OnChangingRole(ChangingRoleEventArgs ev)
         {
-            if (ev.Player.IsHuman && Plugin.Instance.Config.SpawnWithPills)
+            if (ev.NewRole != RoleType.None && ev.NewRole != RoleType.Spectator && ev.NewRole != RoleType.Tutorial && ev.NewRole.GetTeam() != Team.SCP && Plugin.Instance.Config.SpawnWithPills)
                 ev.Items.Add(ItemType.Painkillers);
         }
     }

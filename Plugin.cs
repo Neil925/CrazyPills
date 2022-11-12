@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
+using Exiled.API.Enums;
 using Exiled.API.Features;
 
 using PlayerE = Exiled.Events.Handlers.Player;
@@ -15,7 +15,8 @@ namespace CrazyPills
 
         public override string Prefix => "cp";
 
-        public override Version RequiredExiledVersion => new Version(3, 0, 0);
+        public override Version RequiredExiledVersion => new Version(5, 3, 0);
+        public override PluginPriority Priority => PluginPriority.Lowest;
 
         public static Plugin Instance;
 
@@ -27,7 +28,7 @@ namespace CrazyPills
 
             _handler = new EventHandlers();
 
-            PlayerE.ItemUsed += _handler.OnItemUsed;
+            PlayerE.UsedItem += _handler.OnUsedItem;
             PlayerE.ChangingRole += _handler.OnChangingRole;
 
             base.OnEnabled();
@@ -35,7 +36,7 @@ namespace CrazyPills
 
         public override void OnDisabled()
         {
-            PlayerE.ItemUsed -= _handler.OnItemUsed;
+            PlayerE.UsedItem -= _handler.OnUsedItem;
             PlayerE.ChangingRole -= _handler.OnChangingRole;
 
             _handler = null;
